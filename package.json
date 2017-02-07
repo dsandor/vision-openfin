@@ -1,0 +1,19 @@
+{
+  "name": "vision-openfin",
+  "version": "1.0.0",
+  "description": "OpenFIN client plugin for interacting with vision admin.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsandor/vision-openfin.git"
+  },
+  "author": "David Sandor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dsandor/vision-openfin/issues"
+  },
+  "homepage": "https://github.com/dsandor/vision-openfin#readme"
+}
