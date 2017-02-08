@@ -33,7 +33,7 @@ class Vision {
 
   debug(message, ...args) {
     if (this.options.debug) {
-      this.debug(message, args);
+      console.log(message, args);
     }
   }
 
