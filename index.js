@@ -39,7 +39,7 @@ class Vision {
 
   init(options) {
     if (!options || !options.host) {
-      debug(ERROR_HOST_REQUIRED);
+      this.debug(ERROR_HOST_REQUIRED);
       throw new Error(ERROR_HOST_REQUIRED);
     }
 
@@ -49,35 +49,37 @@ class Vision {
     this.uri = `ws://${host}:${port}/`;
 
     if (document && document.addEventListener) {
-      document.addEventListener('DOMContentLoaded', function () {
-        debug('DOMContentLoaded...');
+      let self = this;
+
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOMContentLoaded...');
         if (fin && fin.desktop) {
           fin.desktop.main(function () {
-            this.connect();
+            self.connect();
 
             fin.desktop.System.getEnvironmentVariable('HOSTNAME', function (value) {
               if (value) {
-                this.clientComputerName = value;
+                self.clientComputerName = value;
               }
             }, (err) => {
-              this.debug('ERROR getting env variable:', err);
+              console.log('ERROR getting env variable:', err);
             });
           });
         } else {
-          this.debug('openfin environment not found. Not connecting to vision server.');
+          console.log('openfin environment not found. Not connecting to vision server.');
         }
 
         // TODO: Move to a function.  Also move to a more appropriate place.  Also look into race condition with w.vision.connect();
         fin.desktop.System.getMonitorInfo((monitorInfo) => {
-          this.monitorInfo = monitorInfo;
+          self.monitorInfo = monitorInfo;
         });
 
         fin.desktop.System.getHostSpecs((hostInfo) => {
-          this.hostInfo = hostInfo;
+          self.hostInfo = hostInfo;
         });
 
         fin.desktop.System.getProcessList((processList) => {
-          this.processList = processList;
+          self.processList = processList;
         });
       });
     }
@@ -142,7 +144,7 @@ class Vision {
     }
 
     if (!this.websocket.onmessage) {
-      this.websocket.onmessage = this.messageHandler;
+      this.websocket.onmessage = this.messageHandler.bind(this);
     }
   }
 
