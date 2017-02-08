@@ -44,9 +44,11 @@ class Vision {
     }
 
     let host = options.host,
-      port = options.port || 16999;
+        port = options.port || 16999,
+        path = options.path || '/';
 
-    this.uri = `ws://${host}:${port}/`;
+    this.uri = `ws://${host}:${port}${path}`;
+
 
     if (document && document.addEventListener) {
       let self = this;
