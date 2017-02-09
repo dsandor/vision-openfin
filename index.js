@@ -85,7 +85,7 @@ class Vision {
   configureFin() {
     this.debug('Configure FIN...');
     let self = this;
-    if (fin && fin.desktop) {
+    if (window && window.fin && fin.desktop) {
       fin.desktop.main(function () {
         self.connect();
 
@@ -99,6 +99,7 @@ class Vision {
       });
     } else {
       self.debug('openfin environment not found. Not connecting to vision server.');
+      return;
     }
 
     // TODO: Move to a function.  Also move to a more appropriate place.  Also look into race condition with w.vision.connect();
