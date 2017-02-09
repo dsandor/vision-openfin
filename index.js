@@ -51,7 +51,7 @@ class Vision {
             config = config[0];
           }
 
-          Object.assign(this.options, config);
+          Object.assign(this.options, options, config);
 
           return this.setupSocket();
         });
@@ -61,9 +61,9 @@ class Vision {
   }
 
   setupSocket() {
-    let host = options.host,
-      port = options.port || 16999,
-      path = options.path || '/';
+    let host = this.options.host,
+        port = this.options.port || 16999,
+        path = this.options.path || '/';
 
     this.uri = `ws://${host}:${port}${path}`;
 
