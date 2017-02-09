@@ -62,46 +62,59 @@ class Vision {
 
   setupSocket() {
     let host = this.options.host,
-        port = this.options.port || 16999,
-        path = this.options.path || '/';
+      port = this.options.port || 16999,
+      path = this.options.path || '/';
 
     this.uri = `ws://${host}:${port}${path}`;
+
+    this.debug(`connecting to uri: ${this.uri}`);
 
     if (document && document.addEventListener) {
       let self = this;
 
-      document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOMContentLoaded...');
-        if (fin && fin.desktop) {
-          fin.desktop.main(function () {
-            self.connect();
+      console.log(document.readyState);
 
-            fin.desktop.System.getEnvironmentVariable('HOSTNAME', function (value) {
-              if (value) {
-                self.clientComputerName = value;
-              }
-            }, (err) => {
-              console.log('ERROR getting env variable:', err);
-            });
-          });
-        } else {
-          console.log('openfin environment not found. Not connecting to vision server.');
-        }
-
-        // TODO: Move to a function.  Also move to a more appropriate place.  Also look into race condition with w.vision.connect();
-        fin.desktop.System.getMonitorInfo((monitorInfo) => {
-          self.monitorInfo = monitorInfo;
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        this.configureFin();
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          self.configureFin();
         });
+      }
+    }
+  }
 
-        fin.desktop.System.getHostSpecs((hostInfo) => {
-          self.hostInfo = hostInfo;
-        });
+  configureFin() {
+    console.log('Configure FIN...');
+    let self = this;
+    if (fin && fin.desktop) {
+      fin.desktop.main(function () {
+        self.connect();
 
-        fin.desktop.System.getProcessList((processList) => {
-          self.processList = processList;
+        fin.desktop.System.getEnvironmentVariable('HOSTNAME', function (value) {
+          if (value) {
+            self.clientComputerName = value;
+          }
+        }, (err) => {
+          console.log('ERROR getting env variable:', err);
         });
       });
+    } else {
+      console.log('openfin environment not found. Not connecting to vision server.');
     }
+
+    // TODO: Move to a function.  Also move to a more appropriate place.  Also look into race condition with w.vision.connect();
+    fin.desktop.System.getMonitorInfo((monitorInfo) => {
+      self.monitorInfo = monitorInfo;
+    });
+
+    fin.desktop.System.getHostSpecs((hostInfo) => {
+      self.hostInfo = hostInfo;
+    });
+
+    fin.desktop.System.getProcessList((processList) => {
+      self.processList = processList;
+    });
   }
 
   heartbeat(socket) {
