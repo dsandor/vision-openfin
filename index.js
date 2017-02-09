@@ -1,6 +1,6 @@
 'use strict';
 
-const ERROR_HOST_REQUIRED = 'Host is a required option.';
+const ERROR_HOST_REQUIRED = 'Either host or configUrl is a required option.';
 
 class Vision {
   constructor(options) {
@@ -38,17 +38,34 @@ class Vision {
   }
 
   init(options) {
-    if (!options || !options.host) {
+    if (!options || (!options.host && !options.configUrl)) {
       this.debug(ERROR_HOST_REQUIRED);
       throw new Error(ERROR_HOST_REQUIRED);
     }
 
+    if (options.configUrl) {
+      fetch(options.configUrl)
+        .then((response) => response.json())
+        .then((config) => {
+          if (Array.isArray(config)) {
+            config = config[0];
+          }
+
+          Object.assign(this.options, config);
+
+          return this.setupSocket();
+        });
+    } else {
+      this.setupSocket();
+    }
+  }
+
+  setupSocket() {
     let host = options.host,
-        port = options.port || 16999,
-        path = options.path || '/';
+      port = options.port || 16999,
+      path = options.path || '/';
 
     this.uri = `ws://${host}:${port}${path}`;
-
 
     if (document && document.addEventListener) {
       let self = this;
