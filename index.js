@@ -198,6 +198,21 @@ class Vision {
     setTimeout(() => this.connect(uri), this.connectionRetryInterval);
     this.debug(`Retrying connection to server in ${this.connectionRetryInterval / 1000} seconds.`);
   }
+
+  notifyLastAction(action) {
+    this.debug('notifying of action:', action);
+
+    if (this.websocket.readyState === 1) {
+      this.websocket.send(JSON.stringify({
+        type: 'user-action',
+        action
+      }));
+    }
+  }
+
+  updateAdditionalProps(dataToMerge) {
+    this.additionalProps = Object.assign(this.additionalProps, dataToMerge);
+  }
 }
 
 module.exports = Vision;
