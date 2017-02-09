@@ -72,8 +72,6 @@ class Vision {
     if (document && document.addEventListener) {
       let self = this;
 
-      console.log(document.readyState);
-
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
         this.configureFin();
       } else {
@@ -85,7 +83,7 @@ class Vision {
   }
 
   configureFin() {
-    console.log('Configure FIN...');
+    this.debug('Configure FIN...');
     let self = this;
     if (fin && fin.desktop) {
       fin.desktop.main(function () {
@@ -96,11 +94,11 @@ class Vision {
             self.clientComputerName = value;
           }
         }, (err) => {
-          console.log('ERROR getting env variable:', err);
+          self.debug('ERROR getting env variable:', err);
         });
       });
     } else {
-      console.log('openfin environment not found. Not connecting to vision server.');
+      self.debug('openfin environment not found. Not connecting to vision server.');
     }
 
     // TODO: Move to a function.  Also move to a more appropriate place.  Also look into race condition with w.vision.connect();
