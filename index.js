@@ -29,6 +29,8 @@ class Vision {
     this.clientComputerName = '';
 
     this.init(this.options);
+
+    this.sentScreenshot = false;
   }
 
   debug(message, ...args) {
@@ -131,6 +133,11 @@ class Vision {
         }));
 
         this.heartbeat(socket);
+
+        if (!this.sentScreenshot) {
+          this.sentScreenshot = true;
+          this.takeScreenshot();
+        }
       }
 
       if (socket.readyState > 1) this.handleConnectionError();
@@ -212,6 +219,21 @@ class Vision {
 
   updateAdditionalProps(dataToMerge) {
     this.additionalProps = Object.assign(this.additionalProps, dataToMerge);
+  }
+
+  takeScreenshot() {
+    this.debug('takeScreenshot called.');
+
+    let finWindow = fin.desktop.Window.getCurrent(),
+        self = this;
+    finWindow.getSnapshot(function (base64Snapshot) {
+      if (self.websocket.readyState === 1) {
+        self.websocket.send(JSON.stringify({
+          type: 'screenshot',
+          data: base64Snapshot
+        }));
+      }
+    });
   }
 }
 
