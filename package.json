@@ -1,6 +1,6 @@
 {
   "name": "vision-openfin",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "OpenFIN client plugin for interacting with vision admin.",
   "main": "index.js",
   "scripts": {
