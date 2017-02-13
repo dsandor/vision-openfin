@@ -215,7 +215,7 @@ class Vision {
   }
 
   notifyLastAction(action) {
-    this.debug('notifying of action:', action);
+    this.debug(`notifying of action: ${action}`);
 
     if (this.websocket.readyState === 1) {
       this.websocket.send(JSON.stringify({
@@ -225,7 +225,7 @@ class Vision {
     }
 
     if (action && action.takeScreenshot) {
-      setTimeout(takeScreenshot, this.notifyLastActionScreenshotDelay);
+      setTimeout(this.takeScreenshot.bind(this), this.notifyLastActionScreenshotDelay);
     }
   }
 
@@ -236,10 +236,13 @@ class Vision {
   takeScreenshot() {
     this.debug('takeScreenshot called.');
     let secondsSinceLastScreenshot = (Date.now() - this.lastScreenshot) / 1000;
+
     if (secondsSinceLastScreenshot < this.minimumSecondsBetweenScreenshots) {
       this.debug(`screenshot skipped, last one taken ${secondsSinceLastScreenshot} seconds ago.`);
       return;
     }
+
+    this.lastScreenshot = Date.now();
 
     let finWindow = fin.desktop.Window.getCurrent(),
         self = this;
