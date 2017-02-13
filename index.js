@@ -31,6 +31,12 @@ class Vision {
     this.init(this.options);
 
     this.sentScreenshot = false;
+
+    this.lastScreenshot = 0;
+
+    this.minimumSecondsBetweenScreenshots = options.minimumSecondsBetweenScreenshots || 120;
+
+    this.notifyLastActionScreenshotDelay = options.notifyLastActionScreenshotDelay || 500;
   }
 
   debug(message, ...args) {
@@ -159,6 +165,8 @@ class Vision {
         .Application
         .getCurrent()
         .restart();
+    } else if (message.type === 'take-screenshot') {
+      this.takeScreenshot();
     }
 
   }
@@ -215,6 +223,10 @@ class Vision {
         action
       }));
     }
+
+    if (action && action.takeScreenshot) {
+      setTimeout(takeScreenshot, this.notifyLastActionScreenshotDelay);
+    }
   }
 
   updateAdditionalProps(dataToMerge) {
@@ -223,6 +235,11 @@ class Vision {
 
   takeScreenshot() {
     this.debug('takeScreenshot called.');
+    let secondsSinceLastScreenshot = (Date.now() - this.lastScreenshot) / 1000;
+    if (secondsSinceLastScreenshot < this.minimumSecondsBetweenScreenshots) {
+      this.debug(`screenshot skipped, last one taken ${secondsSinceLastScreenshot} seconds ago.`);
+      return;
+    }
 
     let finWindow = fin.desktop.Window.getCurrent(),
         self = this;
