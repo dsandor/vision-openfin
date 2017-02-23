@@ -28,8 +28,6 @@ class Vision {
 
     this.clientComputerName = '';
 
-    this.init(this.options);
-
     this.sentScreenshot = false;
 
     this.lastScreenshot = 0;
@@ -37,6 +35,14 @@ class Vision {
     this.minimumSecondsBetweenScreenshots = options.minimumSecondsBetweenScreenshots || 120;
 
     this.notifyLastActionScreenshotDelay = options.notifyLastActionScreenshotDelay || 500;
+
+    this.fullDataPacketEvery = 30; // send the full heartbeat every (default 30) heartbeats (starts off with full).
+
+    this.additionalDataCollector = options.additionalDataCollector || () => {};
+
+    this.heartbeatCount = 0;
+
+    this.init(this.options);
   }
 
   debug(message, ...args) {
@@ -126,17 +132,25 @@ class Vision {
 
   heartbeat(socket) {
     setTimeout(() => {
+      let heartbeatMessage = {
+        type: 'heartbeat'
+      };
+
+      if (this.heartbeatCount === 0 || (this.heartbeatCount % this.fullDataPacketEvery === 0)) {
+        heartbeatMessage = Object.assign({}, 
+          {
+            location: window.location,
+            connectionId: this.connectionId,
+            processList: this.processList,
+            hostInfo: this.hostInfo,
+            monitorInfo: this.monitorInfo,
+            additionalProps: this.additionalProps
+          },
+          { additionalData: this.additionalDataCollector() });
+      }
 
       if (socket.readyState === 1) {
-        socket.send(JSON.stringify({
-          type: 'heartbeat',
-          location: window.location,
-          connectionId: this.connectionId,
-          processList: this.processList,
-          hostInfo: this.hostInfo,
-          monitorInfo: this.monitorInfo,
-          additionalProps: this.additionalProps
-        }));
+        socket.send(JSON.stringify(heartbeatMessage));
 
         this.heartbeat(socket);
 
