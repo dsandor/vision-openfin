@@ -38,7 +38,7 @@ class Vision {
 
     this.fullDataPacketEvery = 30; // send the full heartbeat every (default 30) heartbeats (starts off with full).
 
-    this.additionalDataCollector = options.additionalDataCollector || () => {};
+    this.additionalDataCollector = options.additionalDataCollector || function() { return {} };
 
     this.heartbeatCount = 0;
 
