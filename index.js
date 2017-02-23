@@ -150,6 +150,8 @@ class Vision {
       }
 
       if (socket.readyState === 1) {
+        this.heartbeatCount++;
+        
         socket.send(JSON.stringify(heartbeatMessage));
 
         this.heartbeat(socket);
