@@ -137,7 +137,6 @@ class Vision {
         type: 'heartbeat'
       };
 
-      console.log('this.heartbeatCount:', self.heartbeatCount);
       if (self.heartbeatCount === 0 || (self.heartbeatCount % self.fullDataPacketEvery === 0)) {
         heartbeatMessage = Object.assign({},
           heartbeatMessage,
