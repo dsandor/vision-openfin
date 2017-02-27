@@ -44,6 +44,8 @@ class Vision {
 
     this.heartbeatCount = 0;
 
+    this.heartbeatInterval = options.heartbeatInterval > 1000 ? options.heartbeatInterval : 10 * 1000;
+
     this.init(this.options);
   }
 
@@ -169,7 +171,7 @@ class Vision {
       }
 
       if (socket.readyState > 1) self.handleConnectionError();
-    }, self.options.heartbeatInterval || 1000);
+    }, self.heartbeatInterval || 10000);
   }
 
   messageHandler(event) {
