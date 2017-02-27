@@ -40,6 +40,8 @@ class Vision {
 
     this.additionalDataCollector = options.additionalDataCollector || function() { return {} };
 
+    this.actions = options.actions || {};
+
     this.heartbeatCount = 0;
 
     this.init(this.options);
@@ -173,6 +175,7 @@ class Vision {
   messageHandler(event) {
     if (!event || !event.data) return;
 
+    let self = this;
     this.debug('message: ', event.data);
     let message = JSON.parse(event.data);
 
@@ -187,6 +190,28 @@ class Vision {
         .restart();
     } else if (message.type === 'take-screenshot') {
       this.takeScreenshot();
+    } else {
+      if (this.options.actions[message.type]) {
+        let fn = this.options.actions[message.type].bind(this);
+        let result = fn(message);
+        if (typeof result === 'Promise') {
+          result.then((r) => {
+            if (self.websocket.readyState === 1) {
+              self.websocket.send(JSON.stringify({
+                type: `${message.type}`,
+                data: r
+              }));
+            }
+          });
+        } else {
+          if (self.websocket.readyState === 1) {
+            self.websocket.send(JSON.stringify({
+              type: `${message.type}`,
+              data: result
+            }));
+          }
+        }
+      }
     }
 
   }
