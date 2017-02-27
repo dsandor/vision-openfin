@@ -202,6 +202,9 @@ class Vision {
                 data: r
               }));
             }
+          })
+          .catch((err) => {
+            console.error('vision-openfin - Failed executing client action:', err);
           });
         } else {
           if (self.websocket.readyState === 1) {
