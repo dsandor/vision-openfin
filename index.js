@@ -194,7 +194,7 @@ class Vision {
       if (this.options.actions[message.type]) {
         let fn = this.options.actions[message.type].bind(this);
         let result = fn(message);
-        if (typeof result === 'Promise') {
+        if (typeof result === 'object' && result.then) {
           result.then((r) => {
             if (self.websocket.readyState === 1) {
               self.websocket.send(JSON.stringify({
