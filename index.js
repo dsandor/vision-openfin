@@ -131,39 +131,44 @@ class Vision {
   }
 
   heartbeat(socket) {
+    let self = this;
     setTimeout(() => {
       let heartbeatMessage = {
         type: 'heartbeat'
       };
 
-      if (this.heartbeatCount === 0 || (this.heartbeatCount % this.fullDataPacketEvery === 0)) {
-        heartbeatMessage = Object.assign({}, 
+      console.log('this.heartbeatCount:', self.heartbeatCount);
+      if (self.heartbeatCount === 0 || (self.heartbeatCount % self.fullDataPacketEvery === 0)) {
+        heartbeatMessage = Object.assign({},
+          heartbeatMessage,
           {
             location: window.location,
-            connectionId: this.connectionId,
-            processList: this.processList,
-            hostInfo: this.hostInfo,
-            monitorInfo: this.monitorInfo,
-            additionalProps: this.additionalProps
+            connectionId: self.connectionId,
+            processList: self.processList,
+            hostInfo: self.hostInfo,
+            monitorInfo: self.monitorInfo,
+            additionalProps: self.additionalProps
           },
-          { additionalData: this.additionalDataCollector() });
+          { additionalData: self.additionalDataCollector() });
       }
 
       if (socket.readyState === 1) {
-        this.heartbeatCount++;
-        
+        self.heartbeatCount++;
+
+        self.debug(`sending hb# ${self.heartbeatCount}`, heartbeatMessage);
+
         socket.send(JSON.stringify(heartbeatMessage));
 
-        this.heartbeat(socket);
+        self.heartbeat(socket);
 
-        if (!this.sentScreenshot) {
-          this.sentScreenshot = true;
-          this.takeScreenshot();
+        if (!self.sentScreenshot) {
+          self.sentScreenshot = true;
+          self.takeScreenshot();
         }
       }
 
-      if (socket.readyState > 1) this.handleConnectionError();
-    }, this.options.heartbeatInterval || 1000);
+      if (socket.readyState > 1) self.handleConnectionError();
+    }, self.options.heartbeatInterval || 1000);
   }
 
   messageHandler(event) {
@@ -188,7 +193,8 @@ class Vision {
   }
 
   connect(uri) {
-    var wsUri = uri || this.uri;
+    let wsUri = uri || this.uri,
+        self = this;
 
     this.websocket = new WebSocket(wsUri);
     this.websocket.onerror = (event) => {
@@ -201,7 +207,7 @@ class Vision {
         this.debug('onopen - event:' + JSON.stringify(evnt));
         this.connectionRetryCount = 0;
         this.connectionRetryInterval = 1000;
-        this.heartbeat(this.websocket);
+        this.heartbeat.bind(self, this.websocket)();
       };
     }
 
