@@ -4,7 +4,7 @@
   "description": "OpenFIN client plugin for interacting with vision admin.",
   "main": "lib/index.js",
   "scripts": {
-    "version": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "prepublish": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "compile": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "babel": {
