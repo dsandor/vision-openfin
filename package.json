@@ -2,9 +2,15 @@
   "name": "vision-openfin",
   "version": "1.7.5",
   "description": "OpenFIN client plugin for interacting with vision admin.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "version": "node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "compile": "node_modules/babel-cli/bin/babel.js src --out-dir lib"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   },
   "repository": {
     "type": "git",
@@ -15,5 +21,10 @@
   "bugs": {
     "url": "https://github.com/dsandor/vision-openfin/issues"
   },
-  "homepage": "https://github.com/dsandor/vision-openfin#readme"
+  "homepage": "https://github.com/dsandor/vision-openfin#readme",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1"
+  }
 }
